@@ -1,0 +1,42 @@
+# =========================
+# STAGE 1 - BUILD
+# =========================
+
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+
+WORKDIR /app
+
+# Copiar pom primero para cache
+COPY pom.xml .
+
+# Descargar dependencias
+RUN mvn dependency:go-offline
+
+# Copiar código
+COPY src ./src
+
+# Compilar proyecto
+RUN mvn clean package -DskipTests
+
+# =========================
+# STAGE 2 - RUNTIME
+# =========================
+
+FROM eclipse-temurin:17-jre-alpine
+
+# Crear usuario no root
+RUN addgroup -S spring && adduser -S spring -G spring
+
+WORKDIR /app
+
+# Copiar jar generado
+COPY --from=build /app/target/*.jar app.jar
+
+# Puerto Spring Boot
+EXPOSE 8081
+
+# Seguridad
+USER spring
+
+# Ejecutar aplicación
+ENTRYPOINT ["java","-jar","app.jar"]
