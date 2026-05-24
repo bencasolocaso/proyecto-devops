@@ -406,5 +406,5 @@ docker volume create mysql_data
 ---
 
 **Última actualización**: Mayo 2025  
-**Autores**: Equipo DevOps - Innovatech Chile  
+**Autores**: Benjamin Serrano - Luis Villalobos
 **Estado**: ✅ Producción
